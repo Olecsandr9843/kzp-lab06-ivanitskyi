@@ -1,0 +1,27 @@
+# Віртуальні середовища відтворюються з pyproject.toml.
+.venv/
+.venv-*/
+
+# Результати збирання.
+build/
+dist/
+*.egg-info/
+
+# Кеші інструментів.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Звіти, які створює програма під час запуску.
+reports/*
+!reports/.gitkeep
+
+# Великі тимчасові файли вимірювань.
+tools/*.csv
+
+# Локальні налаштування.
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
