@@ -196,7 +196,7 @@ make_summary(records, threshold=14)  # без метрик, інший порі�
 ## 11. Якість та пакетування
 
 - `ruff check .` → `All checks passed!` (правила `E`, `W`, `F`, `B`, `UP`, `I`; довжина рядка 100).
-- `ruff format --check .` → `20 files already formatted`.
+- `ruff format --check .` → `21 files already formatted` (ruff перевіряє й блоки коду в Markdown).
 - `python -m build --wheel` → `dist/kzp_lab06-1.0.0-py3-none-any.whl`.
 - Встановлення в окреме чисте середовище без dev-залежностей:
 
@@ -249,8 +249,9 @@ Python `3.11`, `3.13` (6 jobs). Кроки: checkout → setup-python з кеш�
 | [#6](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/issues/6) CI і wheel | `.github/workflows/ci.yml` | 6 зелених jobs, артефакти |
 | [#7](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/issues/7) зірочка | `iter_records`, `summarize_stream`, `tools/memory_benchmark.py` | тест еквівалентності, вимірювання |
 | [#8](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/issues/8) документація | README, REPORT, docstrings | рев'ю PR |
+| [#10](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/issues/10) **bug**: `ruff format --check` падав на прикладі коду в REPORT.md | приклад відформатовано | CI: `21 files already formatted` |
 
-Pull Request: [#9](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/pull/9) — `lab06 → main`, закриває #1–#8.
+Pull Request: [#9](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/pull/9) — `lab06 → main`, закриває #1–#8 і #10.
 
 ## 14. Академічна доброчесність
 
@@ -282,7 +283,10 @@ Pull Request: [#9](https://github.com/Olecsandr9843/kzp-lab06-ivanitskyi/pull/9)
 
 - у першому варіанті тестів очікувалося 4 рецептурні препарати замість 5;
 - задовгі рядки, які знайшов `ruff`, виправлено через `ruff format`;
-- спрощено формування оточення для тесту запуску окремим процесом.
+- спрощено формування оточення для тесту запуску окремим процесом;
+- CI впав на `ruff format --check`, бо ruff форматує й блоки коду Python у Markdown, а в
+  прикладі в REPORT.md були зайві пробіли. Оформлено як bug-Issue #10 і виправлено комітом із
+  `Closes #10`.
 
 Я переглянув увесь поданий код, розумію кожен модуль і функцію та можу їх пояснити.
 
