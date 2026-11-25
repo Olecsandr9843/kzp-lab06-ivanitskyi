@@ -64,8 +64,14 @@ jobs:
           PYTHONIOENCODING: utf-8
         run: |
           "$PY" -m kzp_lab06.cli --version
+          "$PY" -m kzp_lab07.cli --version
           "$PY" -m kzp_lab06.cli data/input.csv reports/wheel-summary.txt
-          head -n 5 reports/wheel-summary.txt
+          "$PY" -m kzp_lab07.cli data/input.csv reports/wheel-summary-07.txt
+          head -n 5 reports/wheel-summary-07.txt
+          # Об'єктна модель (ЛР7) має давати той самий звіт, що й словникова (ЛР6).
+          diff reports/wheel-summary.txt reports/wheel-summary-07.txt && echo "Звіти ЛР6 і ЛР7 однакові"
+          "$PY" -m kzp_lab07.cli data/input.csv reports/details.txt --details > /dev/null
+          tail -n 3 reports/details.txt
 
       # Пошкоджений CSV має дати ненульовий код (1) і повідомлення в stderr.
       - name: Run installed CLI (data error)
@@ -75,10 +81,12 @@ jobs:
           printf 'name,form,price,days_left,prescription\nА,мазь,дорого,1,false\n' > broken.csv
           set +e
           "$PY" -m kzp_lab06.cli broken.csv reports/broken.txt
-          code=$?
+          code6=$?
+          "$PY" -m kzp_lab07.cli broken.csv reports/broken.txt
+          code7=$?
           set -e
-          echo "exit code: $code"
-          test "$code" -eq 1
+          echo "exit codes: lab06=$code6 lab07=$code7"
+          test "$code6" -eq 1 && test "$code7" -eq 1
 
       - name: Upload wheel
         if: ${{ success() }}
