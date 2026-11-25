@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kzp-lab06"
+version = "1.0.0"
+description = "Звіт аптеки з CSV (КЗП, ЛР6, варіант 11)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Ivanitskyi" }]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.8",
+    "build>=1.2",
+]
+
+[project.scripts]
+kzp-lab06 = "kzp_lab06.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+exclude = ["build", "dist", ".venv", ".venv-*"]
+
+[tool.ruff.lint]
+# E/W — стиль PEP 8, F — помилки (невикористані імпорти, імена), B — типові пастки (bugbear),
+# UP — сучасний синтаксис, I — порядок імпортів.
+select = ["E", "F", "W", "B", "UP", "I"]
