@@ -105,7 +105,7 @@ def make_summary(
 ```python
 make_summary(records, "price", "days_left", price="Сума цін")
 # metrics == {"Сума цін": 1590.95, "days_left": 796}, threshold == 30
-make_summary(records, threshold=14)   # без метрик, інший поріг
+make_summary(records, threshold=14)  # без метрик, інший поріг
 ```
 
 Типові параметри мають і `expiring_soon(records, threshold=30)` та
