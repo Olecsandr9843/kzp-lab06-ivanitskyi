@@ -1,11 +1,17 @@
 # Аптека — звіт з CSV (Python)
 
 Лабораторні роботи № 6–7 з курсу «Кросплатформні засоби програмування», варіант 11.
-Автор: Іваницький. Поточна версія — **1.0.0** (ЛР6). Звіт: [REPORT.md](REPORT.md).
+Автор: Іваницький. Поточна версія — **1.1.0** (ЛР7). Звіти: [REPORT.md](REPORT.md) (ЛР7),
+[docs/REPORT-lab06.md](docs/REPORT-lab06.md) (ЛР6).
+
+Дистрибутив `kzp-pharmacy` містить два пакети з однаковим зовнішнім звітом:
+
+- `kzp_lab06` (команда `kzp-lab06`) — ЛР6, записи-словники;
+- `kzp_lab07` (команда `kzp-lab07`) — ЛР7, об'єктна модель.
 
 ## Призначення
 
-Пакет `kzp_lab06` читає CSV з асортиментом аптеки, перетворює поля на типізовані значення,
+Програма читає CSV з асортиментом аптеки, перетворює поля на типізовані значення,
 перевіряє дані та записує детермінований текстовий звіт:
 
 - препарати з терміном придатності ≤ 30 днів (відбір);
@@ -63,11 +69,16 @@ python -m pip install -e ".[dev]"
 ## Запуск
 
 ```text
-kzp-lab06 data/input.csv reports/summary.txt
-python -m kzp_lab06.cli data/input.csv reports/summary.txt
-kzp-lab06 data/input.csv reports/summary.txt --threshold 14
-kzp-lab06 --version
+kzp-lab07 data/input.csv reports/summary.txt
+python -m kzp_lab07.cli data/input.csv reports/summary.txt
+kzp-lab07 data/input.csv reports/summary.txt --threshold 14
+kzp-lab07 data/input.csv reports/summary.txt --details
+kzp-lab07 --version
+kzp-lab06 data/input.csv reports/summary-06.txt
 ```
+
+`--details` (лише ЛР7) додає наприкінці оцінку доступності кожного препарату, середню оцінку
+й трійку найдоступніших.
 
 Коди завершення: `0` — успіх, `1` — помилка даних або файла (повідомлення в stderr),
 `2` — хибні аргументи (наприклад, вхідний файл збігається з файлом звіту).
@@ -112,27 +123,46 @@ python -m build --wheel
 
 ```text
 python -m venv .venv-wheel
-.venv-wheel\Scripts\python -m pip install --no-deps dist\kzp_lab06-1.0.0-py3-none-any.whl
-.venv-wheel\Scripts\python -m kzp_lab06.cli data\input.csv reports\wheel-summary.txt
+.venv-wheel\Scripts\python -m pip install --no-deps dist\kzp_pharmacy-1.1.0-py3-none-any.whl
+.venv-wheel\Scripts\python -m kzp_lab07.cli data\input.csv reports\wheel-summary.txt
 ```
 
 У macOS та Ubuntu замість `.venv-wheel\Scripts\python` — `.venv-wheel/bin/python`.
 
+## Об'єктна модель (ЛР7)
+
+```text
+              Medicine (ABC)                    Protocol Scored
+    name, form — лише читання                   name, days_left,
+    price, days_left — @property + setter       availability_score()
+    __str__ __repr__ __eq__ __hash__ sort_key
+    abstract availability_score()
+           ┌──────────┴──────────┐
+PrescriptionMedicine        FreeMedicine
+max(10, 60 − штраф)    100 − штраф (− 20, якщо < 30 дн.)
+
+@dataclass(frozen=True) Summary — незмінний підсумок аналізу
+```
+
+Штраф за ціну — 1 бал за кожні повні 10 грн, не більше 50. Препарат, термін якого спливає
+сьогодні, отримує 0. Функції `analysis` працюють з будь-яким об'єктом протоколу `Scored` і не
+перевіряють конкретний клас.
+
 ## Структура
 
 ```text
-src/kzp_lab06/
-  __init__.py   — версія пакета з метаданих
-  errors.py     — DataError
-  loader.py     — читання CSV (DictReader), перетворення й перевірка полів, генератор iter_records
-  analysis.py   — відбір, словник, множина, підсумок; summarize_stream (один прохід)
-  reporting.py  — текст звіту та запис файла
-  cli.py        — аргументи командного рядка, коди завершення
-  __main__.py   — запуск python -m kzp_lab06
-tests/          — pytest
+src/kzp_lab06/  — ЛР6 (словники): errors, loader, analysis, reporting, cli
+src/kzp_lab07/  — ЛР7 (об'єкти):
+  models.py     — Medicine, PrescriptionMedicine, FreeMedicine, Protocol Scored, Summary
+  loader.py     — CSV → об'єкти, DataError з номером рядка
+  analysis.py   — відбір, підсумок, середня доступність через протокол
+  reporting.py  — звіт як у ЛР6, розділ --details, контекстний менеджер atomic_writer
+  errors.py, cli.py, __main__.py
+tests/          — pytest (test_*.py — ЛР6, test_lab07_*.py — ЛР7)
 data/input.csv  — вхідні дані варіанта
 reports/        — звіти (не в git)
-tools/memory_benchmark.py — вимірювання пам'яті: повне завантаження проти потокової обробки
+docs/           — звіт ЛР6
+tools/memory_benchmark.py — вимірювання пам'яті (ЛР6, зірочка)
 ai/             — ролі ШІ-агентів
 .github/        — CI, форми Issues, шаблон PR
 ```

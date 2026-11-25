@@ -3,9 +3,9 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "kzp-lab06"
-version = "1.0.0"
-description = "Звіт аптеки з CSV (КЗП, ЛР6, варіант 11)"
+name = "kzp-pharmacy"
+version = "1.1.0"
+description = "Звіт аптеки з CSV (КЗП, ЛР6–ЛР7, варіант 11)"
 readme = "README.md"
 requires-python = ">=3.11"
 authors = [{ name = "Ivanitskyi" }]
@@ -19,6 +19,7 @@ dev = [
 
 [project.scripts]
 kzp-lab06 = "kzp_lab06.cli:main"
+kzp-lab07 = "kzp_lab07.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
